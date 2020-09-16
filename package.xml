@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ros2_message_converter</name>
+  <version>0.1.0</version>
+  <description>ROS1 websocket bridge converter</description>
+  <maintainer email="mehmet.killioglu@tuni.fi">Mehmet Killioglu</maintainer>
+  <license>BSD-3</license>
+
+
+  <test_depend>python3-pytest</test_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>rqt_py_common</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
