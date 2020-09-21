@@ -88,17 +88,18 @@ def convert_dictionary_to_ros_message(message_type, dictionary, kind='message', 
         kind = "request"
         ros_message = convert_dictionary_to_ros_message(message_type, dict_message, kind)
     """
-    if kind == 'message':
-        message_class = message_helpers.get_message_class(message_type)
-        message = message_class()
-    elif kind == 'request':
-        service_class = message_helpers.get_service_class(message_type)
-        message = service_class.Request()
-    elif kind == 'response':
-        service_class = message_helpers.get_service_class(message_type)
-        message = service_class.Response()
-    else:
-        raise ValueError('Unknown kind "%s".' % kind)
+    message = message_type()
+    #if kind == 'message':
+    #    message_class = message_helpers.get_message_class(message_type)
+    #    message = message_class()
+    #elif kind == 'request':
+    #    service_class = message_helpers.get_service_class(message_type)
+    #    message = service_class.Request()
+    #elif kind == 'response':
+    #    service_class = message_helpers.get_service_class(message_type)
+    #    message = service_class.Response()
+    #else:
+    #    raise ValueError('Unknown kind "%s".' % kind)
     #message_fields = dict(_get_message_fields(message))
     message_fields = message.get_fields_and_field_types()
     remaining_message_fields = copy.deepcopy(message_fields)
