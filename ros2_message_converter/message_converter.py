@@ -54,6 +54,7 @@ python_float_types = [float]
 
 ros_to_python_type_map = {
     'bool'    : [bool],
+    'boolean'    : [bool],
     'float'   : python_float_types + python_int_types + [np.float32, np.int8, np.int16, np.uint8, np.uint16],
     'float32' : python_float_types + python_int_types + [np.float32, np.int8, np.int16, np.uint8, np.uint16],
        # don't include int32, because conversion to float may change value: v = np.iinfo(np.int32).max; np.float32(v) != v
@@ -73,7 +74,7 @@ ros_to_python_type_map = {
 }
 
 ros_time_types = ['time', 'duration', 'builtin_interfaces/Time','builtin_interfaces/Duration']
-ros_primitive_types = ['bool', 'byte', 'char', 'double', 'int8', 'uint8', 'int16',
+ros_primitive_types = ['bool', 'boolean', 'byte', 'char', 'double', 'int8', 'uint8', 'int16',
                        'uint16', 'int32', 'uint32', 'int64', 'uint64',
                        'float','float32', 'float64', 'string']
 ros_header_types = ['Header', 'std_msgs/Header', 'roslib/Header']
@@ -143,6 +144,8 @@ def _convert_to_ros_type(field_name, field_type, field_value, check_types=True):
     #print(field_type in ros_time_types)
     if _is_ros_binary_type(field_type):
         field_value = _convert_to_ros_binary(field_type, field_value)
+    elif _is_field_type_binary_type_array(field_type):
+        field_value = list(bytearray(base64.b64decode(field_value)))
     elif field_type in ros_time_types:
         field_value = _convert_to_ros_time(field_type, field_value)
     elif field_type in ros_primitive_types:
@@ -259,7 +262,7 @@ def _convert_from_ros_type(field_type, field_value):
 
 def _is_ros_binary_type(field_type):
     """ Checks if the field is a binary array one, fixed size or not
-
+    list(bytearray(de(encoded_data)))
     _is_ros_binary_type("uint8")
     >>> False
     _is_ros_binary_type("uint8[]")
@@ -301,6 +304,9 @@ def _convert_from_ros_array(field_type, field_value):
 
 def _is_field_type_an_array(field_type):
     return field_type.find('sequence') >= 0
+
+def _is_field_type_binary_type_array(field_type):
+    return field_type.find('sequence<uint8>') >= 0 or field_type.find('sequence<char>') >= 0
 
 def _is_field_type_a_primitive_array(field_type):
     bracket_index = field_type.find('<')
