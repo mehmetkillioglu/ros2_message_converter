@@ -118,7 +118,7 @@ def convert_dictionary_to_ros_message(message_type, dictionary, kind='message', 
     for field_name, field_value in dictionary.items():
         if field_name in message_fields:
             field_type = message_fields[field_name]
-            #print(field_type)
+            #print("-" + field_type)
             field_value = _convert_to_ros_type(field_name, field_type, field_value, check_types)
             setattr(message, field_name, field_value)
             del remaining_message_fields[field_name]
@@ -139,7 +139,7 @@ def convert_dictionary_to_ros_message(message_type, dictionary, kind='message', 
 
     return message
 def _convert_to_ros_type(field_name, field_type, field_value, check_types=True):
-    #print(field_type)
+    #print("--" + field_type)
     #print(ros_primitive_types)
     #print(field_type in ros_time_types)
     if _is_ros_binary_type(field_type):
@@ -163,6 +163,8 @@ def _convert_to_ros_type(field_name, field_type, field_value, check_types=True):
         field_value = field_value
     elif _is_field_type_an_array(field_type):
         field_value = _convert_to_ros_array(field_name, field_type, field_value, check_types)
+    elif _is_field_type_an_static_array(field_type):
+        field_value = _convert_to_ros_static_array(field_name, field_type, field_value, check_types)
     else:
         field_value = convert_dictionary_to_ros_message(field_type, field_value)
 
@@ -226,6 +228,11 @@ def _convert_to_ros_array(field_name, field_type, list_value, check_types=True):
     #list_type = field_type[:field_type.index('[')]
     list_type = field_type[field_type.index("<")+1:-1]
     return [_convert_to_ros_type(field_name, list_type, value, check_types) for value in list_value]
+def _convert_to_ros_static_array(field_name, field_type, list_value, check_types=True):
+    # use index to raise ValueError if '[' not present
+    list_type = field_type[:field_type.index('[')]
+    #list_type = field_type[field_type.index("<")+1:-1]
+    return [_convert_to_ros_type(field_name, list_type, value, check_types) for value in list_value]
 
 def convert_ros_message_to_dictionary(message):
     """
@@ -255,6 +262,9 @@ def _convert_from_ros_type(field_type, field_value):
         field_value = list(field_value)
     elif _is_field_type_an_array(field_type):
         field_value = _convert_from_ros_array(field_type, field_value)
+    
+    #elif _is_field_type_an_static_array(field_type):
+    #    field_value = _convert_from_ros_static_array(field_type, field_value)
     else:
         field_value = convert_ros_message_to_dictionary(field_value)
 
@@ -292,6 +302,11 @@ def _convert_from_ros_time(field_type, field_value):
     }
     return field_value
 
+def _convert_from_ros_static_array(field_type,field_value):
+    #use it to convert static array such as double[64]
+    list_type = field_type[:field_type.index('[')]
+    return [_convert_from_ros_type(list_type, value) for value in field_value]
+
 def _convert_from_ros_array(field_type, field_value):
     # use index to raise ValueError if '[' not present
     #list_type = field_type[:field_type.index('[')]
@@ -301,6 +316,9 @@ def _convert_from_ros_array(field_type, field_value):
 
 #def _get_message_fields(message):
 #    return zip(message.slot_name, message.slot_type)
+
+def _is_field_type_an_static_array(field_type):
+    return field_type.find('[') >= 0
 
 def _is_field_type_an_array(field_type):
     return field_type.find('sequence') >= 0
