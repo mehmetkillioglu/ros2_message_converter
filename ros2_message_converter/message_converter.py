@@ -146,8 +146,8 @@ def _convert_to_ros_type(field_name, field_type, field_value, check_types=True):
         field_value = _convert_to_ros_binary(field_type, field_value)
     elif _is_field_type_binary_type_array(field_type):
         field_value = list(bytearray(base64.b64decode(field_value)))
-    elif field_type in ros_time_types:
-        field_value = _convert_to_ros_time(field_type, field_value)
+    #elif field_type in ros_time_types:
+    #    field_value = _convert_to_ros_time(field_type, field_value)
     elif field_type in ros_primitive_types:
         # Note: one could also use genpy.message.check_type() here, but:
         # 1. check_type is "not designed to run fast and is meant only for error diagnosis"
@@ -247,8 +247,8 @@ def convert_ros_message_to_dictionary(message):
 def _convert_from_ros_type(field_type, field_value):
     if field_type in ros_primitive_types:
         field_value = field_value
-    elif field_type in ros_time_types:
-        field_value = _convert_from_ros_time(field_type, field_value)
+    #elif field_type in ros_time_types:
+    #    field_value = _convert_from_ros_time(field_type, field_value)
     elif _is_ros_binary_type(field_type):
         field_value = _convert_from_ros_binary(field_type, field_value)
     elif _is_field_type_a_primitive_array(field_type):
