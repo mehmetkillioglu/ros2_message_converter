@@ -275,8 +275,10 @@ def _is_ros_binary_type(field_type):
     >>> True
     _is_ros_binary_type("char[3]")
     >>> True
+    _is_ros_binary_type("octet")
+    >>> True
     """
-    return field_type.startswith('uint8[') or field_type.startswith('char[')
+    return field_type.startswith('uint8[') or field_type.startswith('char[') or field_type.startswith('octet')
 
 def _is_ros_header(field_type):
     return field_type.find('std_msgs/Header') >= 0
