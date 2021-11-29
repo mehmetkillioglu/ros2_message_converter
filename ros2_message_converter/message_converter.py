@@ -287,8 +287,8 @@ def _convert_from_ros_binary(field_type, field_value):
 
 def _convert_from_ros_time(field_type, field_value):
     field_value = {
-        'secs'  : field_value.secs,
-        'nsecs' : field_value.nsecs
+        'secs'  : field_value.sec,
+        'nsecs' : field_value.nanosec
     }
     return field_value
 
