@@ -311,9 +311,9 @@ def _is_field_type_binary_type_array(field_type):
     return field_type.find('sequence<uint8>') >= 0 or field_type.find('sequence<char>') >= 0
 
 def _is_field_type_a_primitive_array(field_type):
-    bracket_index = field_type.find('<')
+    bracket_index = field_type.find('[')
     if bracket_index < 0:
         return False
     else:
-        list_type = field_type[field_type.index("<")+1:-1]
+        list_type = field_type[0:field_type.index("[")]
         return list_type in ros_primitive_types
